@@ -559,7 +559,8 @@ impl<'a> Table<'a> {
             auto_shrink,
         } = scroll_options;
 
-        let avail_rect = ui.available_rect_before_wrap();
+        let vis_rect =
+            Rect::from_min_size(ui.available_rect_before_wrap().min, ui.clip_rect().size());
 
         let mut scroll_area = ScrollArea::new([false, vscroll])
             .auto_shrink([true; 2])
@@ -590,8 +591,8 @@ impl<'a> Table<'a> {
                     max_used_widths: max_used_widths_ref,
                     striped,
                     row_nr: 0,
-                    start_y: avail_rect.top(),
-                    end_y: avail_rect.bottom(),
+                    start_y: vis_rect.top(),
+                    end_y: vis_rect.bottom(),
                     scroll_to_row: scroll_to_row.map(|(r, _)| r),
                     scroll_to_y_range: &mut scroll_to_y_range,
                 });
@@ -613,7 +614,7 @@ impl<'a> Table<'a> {
         let bottom = ui.min_rect().bottom();
 
         let spacing_x = ui.spacing().item_spacing.x;
-        let mut x = avail_rect.left() - spacing_x * 0.5;
+        let mut x = vis_rect.left() - spacing_x * 0.5;
         for (i, column_width) in state.column_widths.iter_mut().enumerate() {
             let column = &columns[i];
             let column_is_resizable = column.resizable.unwrap_or(resizable);
